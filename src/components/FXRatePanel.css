@@ -19,7 +19,7 @@
   font-size: 1.2rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 0;
+  margin-bottom: 10px; /* Increased from 0 to 20px */
 }
 
 .reload-button {
@@ -78,4 +78,25 @@
 .offer-rate {
   font-size: 1.1rem;
   padding: 0.5rem;
+}
+
+.rate-button-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.rate-button-content .action {
+  font-size: 0.9em;
+}
+
+.rate-button-content .rate {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.rates {
+  display: flex;
+  gap: 20px; /* This adds space between the buttons */
 }

@@ -58,3 +58,51 @@
 .read-the-docs {
   color: #888;
 }
+
+.trade-ticket-standalone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #333333;
+  overflow: hidden;
+}
+
+.trade-ticket {
+  background-color: #444444;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.trade-ticket-header {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.trade-ticket-body input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  background-color: #555555;
+  border: 1px solid #666666;
+  color: white;
+}
+
+.trade-ticket button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  background-color: #666666;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.trade-ticket button:hover {
+  background-color: #777777;
+}
