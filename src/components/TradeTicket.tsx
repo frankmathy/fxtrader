@@ -21,7 +21,7 @@ const TradeTicket: React.FC = () => {
     const handleRateUpdate = (event: MessageEvent) => {
       if (event.data.type === "RATE_UPDATE" && event.data.data.currencyPair === tradeDetails?.currencyPair) {
         const newRate = tradeDetails?.side === "Buy" ? event.data.data.offerRate : event.data.data.bidRate;
-        setTradeDetails(prev => prev ? { ...prev, rate: newRate } : null);
+        setTradeDetails((prev) => (prev ? { ...prev, rate: newRate } : null));
       }
     };
 
@@ -31,7 +31,6 @@ const TradeTicket: React.FC = () => {
   const handleExecute = () => {
     const numAmount = parseFloat(amount);
     if (!isNaN(numAmount) && numAmount > 0) {
-      // Send message to parent window
       window.opener?.postMessage(
         {
           type: "TRADE_EXECUTED",
@@ -39,6 +38,7 @@ const TradeTicket: React.FC = () => {
             side: tradeDetails?.side,
             currencyPair: tradeDetails?.currencyPair,
             amount: numAmount,
+            rate: tradeDetails?.rate,
           },
         },
         "*"
