@@ -16,8 +16,18 @@ const TradeTicket: React.FC = () => {
       currencyPair: params.get("currencyPair") || "",
       rate: parseFloat(params.get("rate") || "0"),
     });
-  }, []);
 
+    // Listen for rate updates
+    const handleRateUpdate = (event: MessageEvent) => {
+      if (event.data.type === "RATE_UPDATE" && event.data.data.currencyPair === tradeDetails?.currencyPair) {
+        const newRate = tradeDetails?.side === "Buy" ? event.data.data.offerRate : event.data.data.bidRate;
+        setTradeDetails(prev => prev ? { ...prev, rate: newRate } : null);
+      }
+    };
+
+    window.addEventListener("message", handleRateUpdate);
+    return () => window.removeEventListener("message", handleRateUpdate);
+  }, [tradeDetails?.side, tradeDetails?.currencyPair]);
   const handleExecute = () => {
     const numAmount = parseFloat(amount);
     if (!isNaN(numAmount) && numAmount > 0) {

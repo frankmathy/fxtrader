@@ -24,11 +24,25 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
 
   const handleRefresh = () => {
     const getRandomAdjustment = () => {
-      return 1 + (Math.random() * 0.002 - 0.001); // Random between -0.001% and +0.001%
+      return 1 + (Math.random() * 0.002 - 0.001);
     };
 
-    setBidRate((prevRate) => prevRate * getRandomAdjustment());
-    setOfferRate((prevRate) => prevRate * getRandomAdjustment());
+    const newBidRate = bidRate * getRandomAdjustment();
+    const newOfferRate = offerRate * getRandomAdjustment();
+    
+    setBidRate(newBidRate);
+    setOfferRate(newOfferRate);
+
+    // Notify any open trade tickets about the rate update
+    const message = {
+      type: "RATE_UPDATE",
+      data: {
+        bidRate: newBidRate,
+        offerRate: newOfferRate,
+        currencyPair
+      }
+    };
+    window.postMessage(message, "*");
   };
 
   const handleTradeClick = (side: "Buy" | "Sell") => {
