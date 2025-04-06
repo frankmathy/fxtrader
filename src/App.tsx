@@ -8,13 +8,13 @@ function App() {
       <div className="fx-rates-container">
         <FXRatePanel 
           currencyPair="EUR/USD"
-          bidRate={1.0876}
-          offerRate={1.0878}
+          initialBidRate={1.0876}
+          initialOfferRate={1.0878}
         />
         <FXRatePanel 
           currencyPair="EUR/GBP"
-          bidRate={0.8534}
-          offerRate={0.8536}
+          initialBidRate={0.8534}
+          initialOfferRate={0.8536}
         />
       </div>
     </div>
