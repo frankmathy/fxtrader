@@ -2,32 +2,28 @@ import React, { useState, useEffect } from "react";
 
 const TradeTicket: React.FC = () => {
   const [amount, setAmount] = useState<string>("");
-  const [tradeDetails, setTradeDetails] = useState<{
-    side: "Buy" | "Sell";
-    currencyPair: string;
-    rate: number;
-  } | null>(null);
+  const [side, setSide] = useState<string>(""); // D
+  const [currencyPair, setCurrencyPair] = useState<string>("");
+  const [rate, setRate] = useState<number>(0);
 
   useEffect(() => {
     // Get parameters from the URL
     const params = new URLSearchParams(window.location.search);
-    setTradeDetails({
-      side: params.get("side") as "Buy" | "Sell",
-      currencyPair: params.get("currencyPair") || "",
-      rate: parseFloat(params.get("rate") || "0"),
-    });
+    setSide(params.get("side") || "");
+    setCurrencyPair(params.get("currencyPair") || "");
+    setRate(parseFloat(params.get("rate") || "0"));
 
     // Listen for rate updates
     const handleRateUpdate = (event: MessageEvent) => {
-      if (event.data.type === "RATE_UPDATE" && event.data.data.currencyPair === tradeDetails?.currencyPair) {
-        const newRate = tradeDetails?.side === "Buy" ? event.data.data.offerRate : event.data.data.bidRate;
-        setTradeDetails((prev) => (prev ? { ...prev, rate: newRate } : null));
+      if (event.data.type === "RATE_UPDATE" && event.data.data.currencyPair === currencyPair) {
+        const newRate = side === "Buy" ? event.data.data.offerRate : event.data.data.bidRate;
+        setRate(newRate as number);
       }
     };
 
     window.addEventListener("message", handleRateUpdate);
     return () => window.removeEventListener("message", handleRateUpdate);
-  }, [tradeDetails?.side, tradeDetails?.currencyPair]);
+  }, [side, currencyPair]);
   const handleExecute = () => {
     const numAmount = parseFloat(amount);
     if (!isNaN(numAmount) && numAmount > 0) {
@@ -35,10 +31,10 @@ const TradeTicket: React.FC = () => {
         {
           type: "TRADE_EXECUTED",
           data: {
-            side: tradeDetails?.side,
-            currencyPair: tradeDetails?.currencyPair,
+            side: side,
+            currencyPair: currencyPair,
             amount: numAmount,
-            rate: tradeDetails?.rate,
+            rate: rate,
           },
         },
         "*"
@@ -47,17 +43,15 @@ const TradeTicket: React.FC = () => {
     }
   };
 
-  if (!tradeDetails) return null;
-
   return (
     <div className="trade-ticket-standalone">
       <div className="trade-ticket">
         <div className="trade-ticket-header">
-          {tradeDetails.side} {tradeDetails.currencyPair}
+          {side} {currencyPair}
         </div>
         <div className="trade-ticket-body">
           <div className="rate-display" style={{ marginBottom: "5px" }}>
-            Rate: {tradeDetails.rate.toFixed(4)}
+            Rate: {rate.toFixed(4)}
           </div>
           <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount" />
         </div>

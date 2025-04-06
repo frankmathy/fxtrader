@@ -53,7 +53,7 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
       });
     };
 
-    const intervalId = setInterval(updateRates, 500);
+    const intervalId = setInterval(updateRates, 1000);
     return () => clearInterval(intervalId);
   }, [bidRate, offerRate, currencyPair, childWindows]);
 
