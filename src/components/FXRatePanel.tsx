@@ -10,7 +10,7 @@ interface FXRatePanelProps {
 const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate, initialOfferRate }) => {
   const [bidRate, setBidRate] = useState(initialBidRate);
   const [offerRate, setOfferRate] = useState(initialOfferRate);
-  const [childWindows, setChildWindows] = useState<Window[]>([]);
+  const [channel] = useState(() => new BroadcastChannel("fx-trading-channel"));
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -19,9 +19,9 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
       }
     };
 
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, []);
+    channel.addEventListener("message", handleMessage);
+    return () => channel.removeEventListener("message", handleMessage);
+  }, [channel]);
 
   useEffect(() => {
     const updateRates = () => {
@@ -35,27 +35,20 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
       setBidRate(newBidRate);
       setOfferRate(newOfferRate);
 
-      // Notify open trade tickets
-      const message = {
+      // Broadcast rate updates to all windows
+      channel.postMessage({
         type: "RATE_UPDATE",
         data: {
           bidRate: newBidRate,
           offerRate: newOfferRate,
           currencyPair,
         },
-      };
-      childWindows.forEach((win) => {
-        if (!win.closed) {
-          win.postMessage(message, "*");
-        } else {
-          setChildWindows((prev) => prev.filter((w) => w !== win));
-        }
       });
     };
 
     const intervalId = setInterval(updateRates, 1000);
     return () => clearInterval(intervalId);
-  }, [bidRate, offerRate, currencyPair, childWindows]);
+  }, [bidRate, offerRate, currencyPair, channel]);
 
   const handleTradeClick = (side: "Buy" | "Sell") => {
     const width = 400;
@@ -64,14 +57,11 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
     const top = (window.screen.height - height) / 2;
 
     const rate = side === "Buy" ? offerRate : bidRate;
-    const newWindow = window.open(
+    window.open(
       `/trade-ticket?side=${side}&currencyPair=${currencyPair}&rate=${rate.toFixed(4)}`,
       "TradeTicket",
       `width=${width},height=${height},left=${left},top=${top}`
     );
-    if (newWindow) {
-      setChildWindows((prev) => [...prev, newWindow]);
-    }
   };
 
   return (
