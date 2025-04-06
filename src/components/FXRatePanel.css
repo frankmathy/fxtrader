@@ -1,0 +1,39 @@
+.fx-rate-panel {
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 1rem;
+  margin: 0.5rem;
+  min-width: 200px;
+  background-color: #333;
+  color: white;
+}
+
+.currency-pair {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.rates-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rate-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rate-label {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 0.1rem;  /* Reduced from 0.2rem */
+}
+
+.bid-rate,
+.offer-rate {
+  font-size: 1.1rem;
+  padding: 0.5rem;
+}
