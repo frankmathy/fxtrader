@@ -5,6 +5,7 @@ interface Trade {
   currencyPair: string;
   amount: number;
   rate: number;
+  side: string;  // Add this line
 }
 
 const TradeBlotter: React.FC = () => {
@@ -18,6 +19,7 @@ const TradeBlotter: React.FC = () => {
           ...prev,
           {
             currencyPair: trade.currencyPair,
+            side: trade.side,
             amount: trade.amount,
             rate: trade.rate,
           },
@@ -36,6 +38,7 @@ const TradeBlotter: React.FC = () => {
         <thead>
           <tr>
             <th>Currency Pair</th>
+            <th>Side</th>
             <th>Amount</th>
             <th>Rate</th>
           </tr>
@@ -44,6 +47,7 @@ const TradeBlotter: React.FC = () => {
           {trades.map((trade, index) => (
             <tr key={index}>
               <td>{trade.currencyPair}</td>
+              <td>{trade.side}</td>
               <td>{trade.amount.toLocaleString()}</td>
               <td>{trade.rate.toFixed(4)}</td>
             </tr>
