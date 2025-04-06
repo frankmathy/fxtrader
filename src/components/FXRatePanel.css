@@ -41,10 +41,38 @@
 }
 
 .currency-pair {
-  font-size: 1.2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 10px; /* Increased from 0 to 20px */
+  font-size: 1.2em;
+  margin: 0;
+  line-height: 32px;  /* Match the button height */
+}
+
+.refresh-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 10px;
+}
+
+.rate-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.currency-pair {
+  font-size: 1.2em;
+  margin: 0;
+  line-height: 32px;  /* Match the button height */
+}
+
+.refresh-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 10px;
 }
 
 .reload-button {
