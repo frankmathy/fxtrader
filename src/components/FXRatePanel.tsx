@@ -23,35 +23,39 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  const handleRefresh = () => {
-    const getRandomAdjustment = () => {
-      return 1 + (Math.random() * 0.002 - 0.001);
+  useEffect(() => {
+    const updateRates = () => {
+      const getRandomAdjustment = () => {
+        return 1 + (Math.random() * 0.002 - 0.001);
+      };
+
+      const newBidRate = bidRate * getRandomAdjustment();
+      const newOfferRate = offerRate * getRandomAdjustment();
+
+      setBidRate(newBidRate);
+      setOfferRate(newOfferRate);
+
+      // Notify open trade tickets
+      const message = {
+        type: "RATE_UPDATE",
+        data: {
+          bidRate: newBidRate,
+          offerRate: newOfferRate,
+          currencyPair,
+        },
+      };
+      childWindows.forEach((win) => {
+        if (!win.closed) {
+          win.postMessage(message, "*");
+        } else {
+          setChildWindows((prev) => prev.filter((w) => w !== win));
+        }
+      });
     };
 
-    const newBidRate = bidRate * getRandomAdjustment();
-    const newOfferRate = offerRate * getRandomAdjustment();
-
-    setBidRate(newBidRate);
-    setOfferRate(newOfferRate);
-
-    // Notify any open trade tickets about the rate update
-    const message = {
-      type: "RATE_UPDATE",
-      data: {
-        bidRate: newBidRate,
-        offerRate: newOfferRate,
-        currencyPair,
-      },
-    };
-    childWindows.forEach((win) => {
-      if (!win.closed) {
-        win.postMessage(message, "*");
-      } else {
-        // Remove closed windows from the list
-        setChildWindows((prev) => prev.filter((win) => win !== win));
-      }
-    });
-  };
+    const intervalId = setInterval(updateRates, 500);
+    return () => clearInterval(intervalId);
+  }, [bidRate, offerRate, currencyPair, childWindows]);
 
   const handleTradeClick = (side: "Buy" | "Sell") => {
     const width = 400;
@@ -74,9 +78,6 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
     <div className="fx-rate-panel">
       <div className="panel-header">
         <div className="currency-pair">{currencyPair}</div>
-        <button className="refresh-button" onClick={handleRefresh}>
-          ↻
-        </button>
       </div>
       <div className="rates">
         <button onClick={() => handleTradeClick("Sell")}>
