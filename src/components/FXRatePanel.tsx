@@ -10,6 +10,7 @@ interface FXRatePanelProps {
 const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate, initialOfferRate }) => {
   const [bidRate, setBidRate] = useState(initialBidRate);
   const [offerRate, setOfferRate] = useState(initialOfferRate);
+  const [childWindows, setChildWindows] = useState<Window[]>([]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -29,7 +30,7 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
 
     const newBidRate = bidRate * getRandomAdjustment();
     const newOfferRate = offerRate * getRandomAdjustment();
-    
+
     setBidRate(newBidRate);
     setOfferRate(newOfferRate);
 
@@ -39,10 +40,17 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
       data: {
         bidRate: newBidRate,
         offerRate: newOfferRate,
-        currencyPair
-      }
+        currencyPair,
+      },
     };
-    window.postMessage(message, "*");
+    childWindows.forEach((win) => {
+      if (!win.closed) {
+        win.postMessage(message, "*");
+      } else {
+        // Remove closed windows from the list
+        setChildWindows((prev) => prev.filter((win) => win !== win));
+      }
+    });
   };
 
   const handleTradeClick = (side: "Buy" | "Sell") => {
@@ -52,11 +60,14 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
     const top = (window.screen.height - height) / 2;
 
     const rate = side === "Buy" ? offerRate : bidRate;
-    window.open(
+    const newWindow = window.open(
       `/trade-ticket?side=${side}&currencyPair=${currencyPair}&rate=${rate.toFixed(4)}`,
       "TradeTicket",
       `width=${width},height=${height},left=${left},top=${top}`
     );
+    if (newWindow) {
+      setChildWindows((prev) => [...prev, newWindow]);
+    }
   };
 
   return (
