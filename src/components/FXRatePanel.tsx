@@ -7,18 +7,26 @@ interface FXRatePanelProps {
 }
 
 const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, bidRate, offerRate }) => {
+  const handleSellClick = () => {
+    console.log(`Sell ${currencyPair} at ${bidRate}`);
+  };
+
+  const handleBuyClick = () => {
+    console.log(`Buy ${currencyPair} at ${offerRate}`);
+  };
+
   return (
     <div className="fx-rate-panel">
       <div className="currency-pair">{currencyPair}</div>
       <div className="rates-container">
-        <div className="rate-column">
+        <button className="rate-button" onClick={handleSellClick}>
           <div className="rate-label">Sell</div>
           <div className="bid-rate">{bidRate.toFixed(4)}</div>
-        </div>
-        <div className="rate-column">
+        </button>
+        <button className="rate-button" onClick={handleBuyClick}>
           <div className="rate-label">Buy</div>
           <div className="offer-rate">{offerRate.toFixed(4)}</div>
-        </div>
+        </button>
       </div>
     </div>
   );

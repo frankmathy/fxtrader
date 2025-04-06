@@ -18,18 +18,34 @@
 .rates-container {
   display: flex;
   justify-content: space-between;
+  gap: 1rem;
 }
 
-.rate-column {
+.rate-button {
+  background: none;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: background-color 0.2s;
+}
+
+.rate-button:hover {
+  background-color: #444;
+}
+
+.rate-button:active {
+  background-color: #555;
 }
 
 .rate-label {
   font-size: 0.9rem;
   color: #aaa;
-  margin-bottom: 0.1rem;  /* Reduced from 0.2rem */
+  margin-bottom: 0.1rem;
 }
 
 .bid-rate,
