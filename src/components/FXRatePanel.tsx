@@ -1,5 +1,5 @@
 import "./FXRatePanel.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 interface FXRatePanelProps {
   currencyPair: string;
@@ -8,17 +8,28 @@ interface FXRatePanelProps {
 }
 
 const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate, initialOfferRate }) => {
+  const [bidRate, setBidRate] = useState(initialBidRate);
+  const [offerRate, setOfferRate] = useState(initialOfferRate);
+
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "TRADE_EXECUTED") {
         console.log("Trade executed:", event.data.data);
-        // Handle the trade execution here
       }
     };
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
   }, []);
+
+  const handleRefresh = () => {
+    const getRandomAdjustment = () => {
+      return 1 + (Math.random() * 0.002 - 0.001); // Random between -0.001% and +0.001%
+    };
+
+    setBidRate((prevRate) => prevRate * getRandomAdjustment());
+    setOfferRate((prevRate) => prevRate * getRandomAdjustment());
+  };
 
   const handleTradeClick = (side: "Buy" | "Sell") => {
     const width = 400;
@@ -35,18 +46,23 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
 
   return (
     <div className="fx-rate-panel">
-      <div className="currency-pair">{currencyPair}</div>
+      <div className="panel-header">
+        <div className="currency-pair">{currencyPair}</div>
+        <button className="refresh-button" onClick={handleRefresh}>
+          ↻
+        </button>
+      </div>
       <div className="rates">
         <button onClick={() => handleTradeClick("Sell")}>
           <div className="rate-button-content">
             <span className="action">Sell</span>
-            <span className="rate">{initialBidRate.toFixed(4)}</span>
+            <span className="rate">{bidRate.toFixed(4)}</span>
           </div>
         </button>
         <button onClick={() => handleTradeClick("Buy")}>
           <div className="rate-button-content">
             <span className="action">Buy</span>
-            <span className="rate">{initialOfferRate.toFixed(4)}</span>
+            <span className="rate">{offerRate.toFixed(4)}</span>
           </div>
         </button>
       </div>
