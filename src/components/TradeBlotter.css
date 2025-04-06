@@ -15,6 +15,7 @@
   width: 100%;
   border-collapse: collapse;
   color: white;
+  table-layout: fixed;  /* Added for fixed column widths */
 }
 
 .trade-blotter th,
@@ -22,6 +23,9 @@
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #444444;
+  white-space: nowrap;  /* Prevents text wrapping */
+  overflow: hidden;     /* Hides overflow content */
+  text-overflow: ellipsis;  /* Shows ellipsis for overflow content */
 }
 
 .trade-blotter th {
