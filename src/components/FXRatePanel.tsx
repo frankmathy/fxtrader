@@ -37,8 +37,9 @@ const FXRatePanel: React.FC<FXRatePanelProps> = ({ currencyPair, initialBidRate,
     const left = (window.screen.width - width) / 2;
     const top = (window.screen.height - height) / 2;
 
+    const rate = side === "Buy" ? offerRate : bidRate;
     window.open(
-      `/trade-ticket?side=${side}&currencyPair=${currencyPair}`,
+      `/trade-ticket?side=${side}&currencyPair=${currencyPair}&rate=${rate.toFixed(4)}`,
       "TradeTicket",
       `width=${width},height=${height},left=${left},top=${top}`
     );

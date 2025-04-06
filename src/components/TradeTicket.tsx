@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const TradeTicket: React.FC = () => {
-  const [amount, setAmount] = useState<string>('');
+  const [amount, setAmount] = useState<string>("");
   const [tradeDetails, setTradeDetails] = useState<{
-    side: 'Buy' | 'Sell';
+    side: "Buy" | "Sell";
     currencyPair: string;
+    rate: number;
   } | null>(null);
 
   useEffect(() => {
     // Get parameters from the URL
     const params = new URLSearchParams(window.location.search);
     setTradeDetails({
-      side: params.get('side') as 'Buy' | 'Sell',
-      currencyPair: params.get('currencyPair') || '',
+      side: params.get("side") as "Buy" | "Sell",
+      currencyPair: params.get("currencyPair") || "",
+      rate: parseFloat(params.get("rate") || "0"),
     });
   }, []);
 
@@ -20,14 +22,17 @@ const TradeTicket: React.FC = () => {
     const numAmount = parseFloat(amount);
     if (!isNaN(numAmount) && numAmount > 0) {
       // Send message to parent window
-      window.opener?.postMessage({
-        type: 'TRADE_EXECUTED',
-        data: {
-          side: tradeDetails?.side,
-          currencyPair: tradeDetails?.currencyPair,
-          amount: numAmount,
+      window.opener?.postMessage(
+        {
+          type: "TRADE_EXECUTED",
+          data: {
+            side: tradeDetails?.side,
+            currencyPair: tradeDetails?.currencyPair,
+            amount: numAmount,
+          },
         },
-      }, '*');
+        "*"
+      );
       window.close();
     }
   };
@@ -41,12 +46,10 @@ const TradeTicket: React.FC = () => {
           {tradeDetails.side} {tradeDetails.currencyPair}
         </div>
         <div className="trade-ticket-body">
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter amount"
-          />
+          <div className="rate-display" style={{ marginBottom: "5px" }}>
+            Rate: {tradeDetails.rate.toFixed(4)}
+          </div>
+          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount" />
         </div>
         <button onClick={handleExecute}>Execute</button>
         <button onClick={() => window.close()}>Cancel</button>
